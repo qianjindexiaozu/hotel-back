@@ -32,6 +32,7 @@ public class UserController {
                 Map<String, Object> claims = new HashMap<>();
                 claims.put("name", u.getName());
                 claims.put("idNumber", u.getIdNumber());
+                claims.put("gender", u.getGender().toString());
                 claims.put("role", u.getRole().toString());
                 claims.put("pic", u.getUserPic());
                 String token = JwtUtil.genToken(claims);
@@ -40,6 +41,19 @@ public class UserController {
             else {
                 return Result.error("密码错误");
             }
+        }
+    }
+
+    @PostMapping("/register")
+    public Result<String> SMS(@RequestParam String phone){
+        //查询用户
+        User u = userService.getUserByPhone(phone);
+        if(u != null){
+            // 用户已注册
+            return Result.error("号码已注册");
+        }
+        else{
+            return Result.success();
         }
     }
 }
