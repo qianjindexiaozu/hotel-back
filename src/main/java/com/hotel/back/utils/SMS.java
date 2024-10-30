@@ -1,15 +1,14 @@
 package com.hotel.back.utils;
 
-import com.aliyun.dysmsapi20170525.models.SendSmsRequest;
 import com.aliyun.tea.TeaException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
 import java.util.UUID;
 
 public class SMS {
+
+    private RedisProperties redisProperties;
+
     public com.aliyun.dysmsapi20170525.Client createClient() throws Exception {
         // 工程代码泄露可能会导致 AccessKey 泄露，并威胁账号下所有资源的安全性。以下代码示例仅供参考。
         // 建议使用更安全的 STS 方式，更多鉴权访问方式请参见：https://help.aliyun.com/document_detail/378657.html。
