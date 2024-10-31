@@ -6,13 +6,13 @@ import org.junit.jupiter.api.Test;
 import java.util.Random;
 
 public class SMSTest {
-    @Test
-    public void SendCode() throws Exception {
-        SMS sms = new SMS();
-        String code = sms.sendCode("18856052309");
-        System.out.println(code);
-
-    }
+//    @Test
+//    public void SendCode() throws Exception {
+//        SMS sms = new SMS();
+//        String result = sms.sendCode("18856052309");
+//        System.out.println(result);
+//
+//    }
 
     @Test
     public void stringAppend() {

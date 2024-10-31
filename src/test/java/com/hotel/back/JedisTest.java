@@ -7,7 +7,7 @@ public class JedisTest {
     @Test
     public void testRedis(){
         Jedis jedis = new Jedis("192.168.228.133", 6379);
-        jedis.auth("123456");
+        jedis.auth("12345678");
 
         jedis.set("username", "Andy");
 

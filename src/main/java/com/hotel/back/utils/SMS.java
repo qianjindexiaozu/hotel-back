@@ -1,13 +1,11 @@
 package com.hotel.back.utils;
 
 import com.aliyun.tea.TeaException;
-import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 
+import java.util.Random;
 import java.util.UUID;
 
 public class SMS {
-
-    private RedisProperties redisProperties;
 
     public com.aliyun.dysmsapi20170525.Client createClient() throws Exception {
         // 工程代码泄露可能会导致 AccessKey 泄露，并威胁账号下所有资源的安全性。以下代码示例仅供参考。
@@ -24,17 +22,22 @@ public class SMS {
 
     public String sendCode(String phone) throws Exception {
         com.aliyun.dysmsapi20170525.Client client = createClient();
+        System.out.println(phone);
 
-        String code = UUID.randomUUID().toString().replace("-", "").substring(0, 6);
+        Random random = new Random();
+        int number = random.nextInt(1000000); // 生成0到999999之间的随机数
+        String code = String.format("%06d", number); // 格式化为6位，不足的前面补零
         com.aliyun.dysmsapi20170525.models.SendSmsRequest sendSmsRequest = new com.aliyun.dysmsapi20170525.models.SendSmsRequest()
                 .setSignName("前进的小卒")
                 .setTemplateCode("SMS_474840621")
                 .setPhoneNumbers(phone)
                 .setTemplateParam("{\"code\":\"" + code + "\"}");
         com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
+        System.out.println("{\"code\":\"" + code + "\"}");
+        String result = null;
         try {
             // 复制代码运行请自行打印 API 的返回值
-            System.out.println(client.sendSmsWithOptions(sendSmsRequest, runtime).getBody().getCode());
+            result = client.sendSmsWithOptions(sendSmsRequest, runtime).getBody().getCode();
         } catch (TeaException error) {
             // 此处仅做打印展示，请谨慎对待异常处理，在工程项目中切勿直接忽略异常。
             // 错误 message
@@ -51,6 +54,11 @@ public class SMS {
             System.out.println(error.getData().get("Recommend"));
             com.aliyun.teautil.Common.assertAsString(error.message);
         }
-        return code;
+        System.out.println(result);
+        if(result.equals("OK")){
+            RedisUtil redisUtil = new RedisUtil();
+            redisUtil.setValue(phone, code);
+        }
+        return result;
     }
 }

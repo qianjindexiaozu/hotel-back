@@ -4,6 +4,8 @@ import com.hotel.back.entity.Result;
 import com.hotel.back.entity.User;
 import com.hotel.back.service.UserService;
 import com.hotel.back.utils.JwtUtil;
+import com.hotel.back.utils.RedisUtil;
+import com.hotel.back.utils.SMS;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,7 +47,12 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public Result<String> SMS(@RequestParam String phone){
+    public Result<String> register(){
+        return null;
+    }
+
+    @PostMapping("/register_sms")
+    public Result<String> SMS(@RequestParam String phone) throws Exception {
         //查询用户
         User u = userService.getUserByPhone(phone);
         if(u != null){
@@ -53,7 +60,14 @@ public class UserController {
             return Result.error("号码已注册");
         }
         else{
-            return Result.success();
+            String result = userService.sendVerifyCode(phone);
+            if(result.equals("OK")){
+                return Result.success();
+            }
+            else{
+                return Result.error(result);
+            }
         }
     }
+
 }

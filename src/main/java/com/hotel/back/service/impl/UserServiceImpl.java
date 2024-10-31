@@ -1,9 +1,10 @@
 package com.hotel.back.service.impl;
 
-import com.hotel.back.entity.Result;
 import com.hotel.back.entity.User;
 import com.hotel.back.mapper.UserMapper;
 import com.hotel.back.service.UserService;
+import com.hotel.back.utils.RedisUtil;
+import com.hotel.back.utils.SMS;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,5 +17,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserByPhone(String phone) {
         return userMapper.getUserByPhone(phone);
+    }
+
+    @Override
+    public String sendVerifyCode(String phone) throws Exception {
+        SMS sms = new SMS();
+        return sms.sendCode(phone);
     }
 }
