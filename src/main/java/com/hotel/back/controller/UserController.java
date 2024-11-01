@@ -1,11 +1,11 @@
 package com.hotel.back.controller;
 
+import com.hotel.back.constant.enums.Gender;
 import com.hotel.back.entity.Result;
 import com.hotel.back.entity.User;
 import com.hotel.back.service.UserService;
 import com.hotel.back.utils.JwtUtil;
 import com.hotel.back.utils.RedisUtil;
-import com.hotel.back.utils.SMS;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,8 +47,22 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public Result<String> register(){
-        return null;
+    public Result<String> register(@RequestParam String name, @RequestParam Gender gender, @RequestParam String idNumber, @RequestParam String phone, @RequestParam String password, @RequestParam String verifyCode){
+        RedisUtil redisUtil = new RedisUtil();
+        if(verifyCode.equals(redisUtil.getValue(phone))){
+            userService.register(name, gender, idNumber, phone, password);
+            User u = userService.getUserByPhone(phone);
+            if(u != null){
+                // 注册成功
+                return Result.success("注册成功");
+            }
+            else{
+                return Result.error("注册失败");
+            }
+        }
+        else{
+            return Result.error("验证码错误！请重新获取验证码注册！");
+        }
     }
 
     @PostMapping("/register_sms")
