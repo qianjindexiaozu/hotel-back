@@ -20,18 +20,28 @@ public class SMS {
         return new com.aliyun.dysmsapi20170525.Client(config);
     }
 
-    public String sendCode(String phone) throws Exception {
+    public String sendCode(String phone, String condition) throws Exception {
         com.aliyun.dysmsapi20170525.Client client = createClient();
         System.out.println(phone);
 
         Random random = new Random();
         int number = random.nextInt(1000000); // 生成0到999999之间的随机数
         String code = String.format("%06d", number); // 格式化为6位，不足的前面补零
-        com.aliyun.dysmsapi20170525.models.SendSmsRequest sendSmsRequest = new com.aliyun.dysmsapi20170525.models.SendSmsRequest()
-                .setSignName("前进的小卒")
-                .setTemplateCode("SMS_474840621")
-                .setPhoneNumbers(phone)
-                .setTemplateParam("{\"code\":\"" + code + "\"}");
+        com.aliyun.dysmsapi20170525.models.SendSmsRequest sendSmsRequest;
+        if(condition.equals("register")){
+            sendSmsRequest = new com.aliyun.dysmsapi20170525.models.SendSmsRequest()
+                    .setSignName("前进的小卒")
+                    .setTemplateCode("SMS_474840621")
+                    .setPhoneNumbers(phone)
+                    .setTemplateParam("{\"code\":\"" + code + "\"}");
+        }
+        else {
+            sendSmsRequest = new com.aliyun.dysmsapi20170525.models.SendSmsRequest()
+                    .setSignName("前进的小卒")
+                    .setTemplateCode("SMS_475015946")
+                    .setPhoneNumbers(phone)
+                    .setTemplateParam("{\"code\":\"" + code + "\"}");
+        }
         com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
         System.out.println("{\"code\":\"" + code + "\"}");
         String result = null;
@@ -57,7 +67,7 @@ public class SMS {
         System.out.println(result);
         if(result.equals("OK")){
             RedisUtil redisUtil = new RedisUtil();
-            redisUtil.setValue(phone, code);
+            redisUtil.setValue(phone, 300, code);
         }
         return result;
     }

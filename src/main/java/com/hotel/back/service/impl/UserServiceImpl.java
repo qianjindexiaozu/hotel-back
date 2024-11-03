@@ -24,9 +24,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String sendVerifyCode(String phone) throws Exception {
+    public User getUserByIdNumber(String IdNumber) {
+        return userMapper.getUserByIdNumber(IdNumber);
+    }
+
+    @Override
+    public String sendVerifyCode(String phone, String condition) throws Exception {
         SMS sms = new SMS();
-        return sms.sendCode(phone);
+        return sms.sendCode(phone, condition);
     }
 
     @Override
@@ -36,6 +41,16 @@ public class UserServiceImpl implements UserService {
         Date reg_time = Date.valueOf(now);
         String user_pic = "default";
         userMapper.register(name, gender, idNumber, phone, password, role, reg_time, user_pic);
+    }
+
+    @Override
+    public void forget(String phone, String password) {
+        userMapper.forget(phone, password);
+    }
+
+    @Override
+    public void changePic(String phone, String pic) {
+        userMapper.changePic(phone, pic);
     }
 
 

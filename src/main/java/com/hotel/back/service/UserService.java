@@ -5,6 +5,9 @@ import com.hotel.back.entity.User;
 
 public interface UserService {
     User getUserByPhone(String phone);
-    String sendVerifyCode(String phone) throws Exception;
+    User getUserByIdNumber(String IdNumber);
+    String sendVerifyCode(String phone, String condition) throws Exception;
     void register(String name, Gender gender, String idNumber, String phone, String password);
+    void forget(String phone, String password);
+    void changePic(String phone, String pic);
 }

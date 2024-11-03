@@ -8,6 +8,7 @@ import java.util.Date;
 
 
 //使用lombok方法在编译阶段自动生成getter等方法
+
 @Data
 public class User {
     private Integer userId;
