@@ -10,4 +10,6 @@ public interface UserService {
     void register(String name, Gender gender, String idNumber, String phone, String password);
     void forget(String phone, String password);
     void changePic(String phone, String pic);
+    void changeInfo(String name, Gender gender, String idNumber, String phone, String originalPhone);
+    void changePassword(String phone, String password);
 }

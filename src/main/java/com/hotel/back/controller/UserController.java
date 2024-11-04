@@ -1,6 +1,5 @@
 package com.hotel.back.controller;
 
-import com.auth0.jwt.interfaces.Claim;
 import com.hotel.back.constant.enums.Gender;
 import com.hotel.back.entity.Result;
 import com.hotel.back.entity.User;
@@ -9,9 +8,13 @@ import com.hotel.back.utils.JwtUtil;
 import com.hotel.back.utils.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @RestController
 @RequestMapping("/user")
@@ -33,14 +36,7 @@ public class UserController {
             // 登录
             System.out.println(u);
             if(u.getPassword().equals(password)){
-                Map<String, Object> claims = new HashMap<>();
-                claims.put("phone", u.getPhone());
-                claims.put("name", u.getName());
-                claims.put("idNumber", u.getIdNumber());
-                claims.put("gender", u.getGender().toString());
-                claims.put("role", u.getRole().toString());
-                claims.put("pic", u.getUserPic());
-                String token = JwtUtil.genToken(claims);
+                String token = JwtUtil.genTokenByUser(u);
                 RedisUtil redisUtil = new RedisUtil();
                 redisUtil.setValue(phone + "_token", 60 * 60 * 6, token);
                 return Result.success(token);
@@ -122,11 +118,95 @@ public class UserController {
         }
     }
 
-    @PostMapping("/change_pic")
-    public Result<String> changePic(@RequestParam String token, @RequestParam String pic){
-        Map<String, Object> map = JwtUtil.parseToken(token);
-        String phone = map.get("phone").toString();
-        userService.changePic(phone, pic);
+    private static final String UPLOAD_DIR = "E:/HFUT/projects/Hotel-Management-System/back/src/main/resources/static/assets/avatars/";
+
+    @PutMapping("/change_pic")
+    public Result<String> handleAvatarUpload(@RequestParam("token") String token, @RequestParam("file") MultipartFile file) {
+        String phone = JwtUtil.getPhoneFromToken(token);
+        if (phone == null) {
+            return Result.error("登录超时，请重新登录");
+        }
+
+        // 检查文件是否为空
+        if (file.isEmpty()) {
+            return Result.error("文件为空");
+        }
+
+        // 检查文件类型
+        String fileType = file.getContentType();
+        if (!"image/jpeg".equals(fileType) && !"image/png".equals(fileType)) {
+            return Result.error("头像必须为 JPG/PNG 格式");
+        }
+
+        // 检查文件大小
+        if (file.getSize() > 2 * 1024 * 1024) { // 2MB
+            return Result.error("头像文件大小不能超过 2MB");
+        }
+
+        // 确保目标目录存在
+        File uploadDir = new File(UPLOAD_DIR);
+        if (!uploadDir.exists()) {
+            uploadDir.mkdirs();
+        }
+
+        // 获取文件名并构造目标文件路径
+        String filename = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+        Path targetPath = Paths.get(uploadDir.getAbsolutePath(), filename);
+
+        // 保存文件
+        try {
+            Files.copy(file.getInputStream(), targetPath);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return Result.error("头像上传失败");
+        }
+
+        userService.changePic(phone, targetPath.toString());
+        User u = userService.getUserByPhone(phone);
+
+        token = JwtUtil.genTokenByUser(u);
+
+        // 返回文件名或其他信息
+        return Result.success(token);
+    }
+
+
+    @PostMapping("/changeInfo_sms")
+    public Result<String> changeInfoSMS(@RequestParam String phone) throws Exception {
+        String result = userService.sendVerifyCode(phone, "changeInfo");
+        if(result.equals("OK")){
+            return Result.success();
+        }
+        else{
+            return Result.error(result);
+        }
+    }
+
+    @PutMapping("/changeInfo")
+    public Result<String> changeInfo(@RequestParam String token, @RequestParam String name, @RequestParam Gender gender, @RequestParam String idNumber, @RequestParam String phone, @RequestParam String verifyCode){
+        String originalPhone = JwtUtil.getPhoneFromToken(token);
+        if(originalPhone == null){
+            return Result.error("登录超时，请重新登陆");
+        }
+        RedisUtil redisUtil = new RedisUtil();
+        if(verifyCode.equals(redisUtil.getValue(phone))){
+            userService.changeInfo(name, gender, idNumber, phone, originalPhone);
+            User u = userService.getUserByPhone(phone);
+            token = JwtUtil.genTokenByUser(u);
+            return Result.success(token);
+        }
+        else{
+            return Result.error("验证码错误！请重新获取验证码并验证！");
+        }
+    }
+
+    @PutMapping("/changePassword")
+    public Result<String> changePassword(@RequestParam String token, @RequestParam String password){
+        String phone = JwtUtil.getPhoneFromToken(token);
+        if(phone == null){
+            return Result.error("token验证有误，请重新登陆");
+        }
+        userService.changePassword(phone, password);
         return Result.success();
     }
 

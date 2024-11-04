@@ -53,5 +53,15 @@ public class UserServiceImpl implements UserService {
         userMapper.changePic(phone, pic);
     }
 
+    @Override
+    public void changeInfo(String name, Gender gender, String idNumber, String phone, String originalPhone) {
+        userMapper.changeInfo(name, gender, idNumber, phone, originalPhone);
+    }
+
+    @Override
+    public void changePassword(String phone, String password) {
+        userMapper.changePassword(phone, password);
+    }
+
 
 }

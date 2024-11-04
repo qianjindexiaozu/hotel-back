@@ -27,17 +27,22 @@ public class JwtTest {
         System.out.println(token);
     }
 
-//    @Test
-//    public void testParse() {
-//        String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6eyJpZCI6MSwidXNlcm5hbWUiOiLlvKDkuIkifSwiZXhwIjoxNzMwMDA5OTM3fQ.mtB-ACK5Fi9zPQizw-16-Hwge2cbW-Ct8R0bEONTj7c";
-//        JWTVerifier jwtVerifier = JWT.require(Algorithm.HMAC256("qianjindexiaozu")).build();
-//
-//        DecodedJWT decodedJWT = jwtVerifier.verify(token);
-//        Map<String, Claim> claims = decodedJWT.getClaims();
-//        System.out.println(claims.get("username"));
-//
-//        // 篡改头部和载荷等数据，验证会失败
-//        // 密钥不正确，验证会失败
-//        // token过期，验证会失败
-//    }
+    @Test
+    public void testParse() {
+        String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6eyJpZCI6MSwidXNlcm5hbWUiOiLlvKDkuIkifSwiZXhwIjoxNzMwMDA5OTM3fQ.mtB-ACK5Fi9zPQizw-16-Hwge2cbW-Ct8R0bEONTj7c";
+        JWTVerifier jwtVerifier = JWT.require(Algorithm.HMAC256("qianjindexiaozu")).build();
+
+        try{
+            DecodedJWT decodedJWT = jwtVerifier.verify(token);
+            Map<String, Claim> claims = decodedJWT.getClaims();
+            System.out.println(claims.get("username"));
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+
+
+        // 篡改头部和载荷等数据，验证会失败
+        // 密钥不正确，验证会失败
+        // token过期，验证会失败
+    }
 }

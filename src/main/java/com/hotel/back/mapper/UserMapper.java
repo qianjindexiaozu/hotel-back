@@ -36,4 +36,15 @@ public interface UserMapper {
     @Update("UPDATE  users set user_pic=#{pic} where phone=#{phone}")
     void changePic(@Param("phone") String phone,
                    @Param("pic") String pic);
+
+    @Update("update users set name=#{name}, gender=#{gender}, id_number=#{idNumber}, phone=#{phone} where phone=#{originalPhone}")
+    void changeInfo(@Param("name") String name,
+                    @Param("gender") Gender gender,
+                    @Param("idNumber") String idNumber,
+                    @Param("phone") String phone,
+                    @Param("originalPhone") String originalPhone);
+
+    @Update("UPDATE users set password=#{password} where phone=#{phone}")
+    void changePassword(@Param("phone") String phone,
+                        @Param("password") String password);
 }

@@ -35,10 +35,17 @@ public class SMS {
                     .setPhoneNumbers(phone)
                     .setTemplateParam("{\"code\":\"" + code + "\"}");
         }
-        else {
+        else if(condition.equals("forget")) {
             sendSmsRequest = new com.aliyun.dysmsapi20170525.models.SendSmsRequest()
                     .setSignName("前进的小卒")
                     .setTemplateCode("SMS_475015946")
+                    .setPhoneNumbers(phone)
+                    .setTemplateParam("{\"code\":\"" + code + "\"}");
+        }
+        else{
+            sendSmsRequest = new com.aliyun.dysmsapi20170525.models.SendSmsRequest()
+                    .setSignName("前进的小卒")
+                    .setTemplateCode("SMS_474806104")
                     .setPhoneNumbers(phone)
                     .setTemplateParam("{\"code\":\"" + code + "\"}");
         }
