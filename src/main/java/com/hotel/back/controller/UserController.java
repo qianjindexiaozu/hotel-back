@@ -17,6 +17,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @RestController
+@ResponseBody
 @RequestMapping("/user")
 public class UserController {
 
@@ -120,8 +121,8 @@ public class UserController {
 
     private static final String UPLOAD_DIR = "E:/HFUT/projects/Hotel-Management-System/back/src/main/resources/static/assets/avatars/";
 
-    @PutMapping("/change_pic")
-    public Result<String> handleAvatarUpload(@RequestParam("token") String token, @RequestParam("file") MultipartFile file) {
+    @PostMapping("/change_pic")
+    public Result<String> handleAvatarUpload(@RequestHeader("Authorization") String token, @RequestParam("file") MultipartFile file) {
         String phone = JwtUtil.getPhoneFromToken(token);
         if (phone == null) {
             return Result.error("登录超时，请重新登录");
@@ -161,7 +162,7 @@ public class UserController {
             return Result.error("头像上传失败");
         }
 
-        userService.changePic(phone, targetPath.toString());
+        userService.changePic(phone, filename);
         User u = userService.getUserByPhone(phone);
 
         token = JwtUtil.genTokenByUser(u);
