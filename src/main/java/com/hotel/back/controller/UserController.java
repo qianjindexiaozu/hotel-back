@@ -1,6 +1,7 @@
 package com.hotel.back.controller;
 
 import com.hotel.back.constant.enums.Gender;
+import com.hotel.back.entity.Price;
 import com.hotel.back.entity.Result;
 import com.hotel.back.entity.User;
 import com.hotel.back.service.UserService;
@@ -12,9 +13,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 
 @RestController
 @ResponseBody
@@ -49,7 +52,12 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public Result<String> register(@RequestParam String name, @RequestParam Gender gender, @RequestParam String idNumber, @RequestParam String phone, @RequestParam String password, @RequestParam String verifyCode){
+    public Result<String> register(@RequestParam String name,
+                                   @RequestParam Gender gender,
+                                   @RequestParam String idNumber,
+                                   @RequestParam String phone,
+                                   @RequestParam String password,
+                                   @RequestParam String verifyCode){
         User u = userService.getUserByIdNumber(idNumber);
         if(u != null){
             return Result.error("此身份证号码已注册");
@@ -91,7 +99,9 @@ public class UserController {
     }
 
     @PostMapping("/forget")
-    public Result<String> forget(@RequestParam String phone, @RequestParam String verifyCode, @RequestParam String password) {
+    public Result<String> forget(@RequestParam String phone,
+                                 @RequestParam String verifyCode,
+                                 @RequestParam String password) {
         RedisUtil redisUtil = new RedisUtil();
         if(verifyCode.equals(redisUtil.getValue(phone))){
             userService.forget(phone, password);
@@ -122,7 +132,8 @@ public class UserController {
     private static final String UPLOAD_DIR = "E:/HFUT/projects/Hotel-Management-System/back/src/main/resources/static/assets/avatars/";
 
     @PostMapping("/change_pic")
-    public Result<String> handleAvatarUpload(@RequestHeader("Authorization") String token, @RequestParam("file") MultipartFile file) {
+    public Result<String> handleAvatarUpload(@RequestHeader("Authorization") String token,
+                                             @RequestParam("file") MultipartFile file) {
         String phone = JwtUtil.getPhoneFromToken(token);
         if (phone == null) {
             return Result.error("登录超时，请重新登录");
@@ -184,7 +195,12 @@ public class UserController {
     }
 
     @PutMapping("/changeInfo")
-    public Result<String> changeInfo(@RequestParam String token, @RequestParam String name, @RequestParam Gender gender, @RequestParam String idNumber, @RequestParam String phone, @RequestParam String verifyCode){
+    public Result<String> changeInfo(@RequestParam String token,
+                                     @RequestParam String name,
+                                     @RequestParam Gender gender,
+                                     @RequestParam String idNumber,
+                                     @RequestParam String phone,
+                                     @RequestParam String verifyCode){
         String originalPhone = JwtUtil.getPhoneFromToken(token);
         if(originalPhone == null){
             return Result.error("登录超时，请重新登陆");
@@ -209,6 +225,63 @@ public class UserController {
         }
         userService.changePassword(phone, password);
         return Result.success();
+    }
+
+    @GetMapping("/get_staff")
+    public Result<ArrayList<User>> getStaff(@RequestParam String token){
+        String role = JwtUtil.getRoleFromToken(token);
+        if(role.equals("Admin")){
+            ArrayList<User> staff = userService.getStaff();
+            return Result.success(staff);
+        }
+        else {
+            return Result.error("需要管理员账号");
+        }
+    }
+
+    @PutMapping("/set_staff")
+    public  Result<String> setStaff(@RequestParam String token,
+                                    @RequestParam int userId,
+                                    @RequestParam String name,
+                                    @RequestParam Gender gender,
+                                    @RequestParam String idNumber,
+                                    @RequestParam String phone){
+        String role = JwtUtil.getRoleFromToken(token);
+        if(role.equals("Admin")){
+            userService.setStaff(userId, name, gender, idNumber, phone);
+            return Result.success();
+        }
+        else {
+            return Result.error("需要管理员账号");
+        }
+    }
+
+    @DeleteMapping("/delete_staff")
+    public Result<String> deleteStaff(@RequestParam String token, @RequestParam int userId){
+        String role = JwtUtil.getRoleFromToken(token);
+        if(role.equals("Admin")){
+            userService.deleteStaff(userId);
+            return Result.success();
+        }
+        else {
+            return Result.error("需要管理员账号");
+        }
+    }
+
+    @PostMapping("/new_staff")
+    public Result<String> newStaff(@RequestParam String token,
+                                   @RequestParam String name,
+                                   @RequestParam Gender gender,
+                                   @RequestParam String idNumber,
+                                   @RequestParam String phone){
+        String role = JwtUtil.getRoleFromToken(token);
+        if(role.equals("Admin")){
+            userService.newStaff(name, gender, idNumber, phone);
+            return Result.success();
+        }
+        else {
+            return Result.error("需要管理员账号");
+        }
     }
 
 }

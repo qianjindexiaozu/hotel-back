@@ -3,13 +3,10 @@ package com.hotel.back.mapper;
 import com.hotel.back.constant.enums.Gender;
 import com.hotel.back.constant.enums.Role;
 import com.hotel.back.entity.User;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 
 import java.sql.Date;
+import java.util.ArrayList;
 
 @Mapper
 public interface UserMapper {
@@ -47,4 +44,27 @@ public interface UserMapper {
     @Update("UPDATE users set password=#{password} where phone=#{phone}")
     void changePassword(@Param("phone") String phone,
                         @Param("password") String password);
+
+    @Select("select * from staff_users")
+    ArrayList<User> getStaff();
+
+    @Update("update users set name=#{name}, gender=#{gender}, id_number=#{idNumber}, phone=#{phone} where user_id=#{userId}")
+    void setStaff(@Param("userId") int userId,
+                  @Param("name") String name,
+                  @Param("gender") Gender gender,
+                  @Param("idNumber") String idNumber,
+                  @Param("phone") String phone);
+
+    @Delete("delete from users where user_id=#{userId}")
+    void deleteStaff(@Param("userId") int userId);
+
+    @Insert("insert into users (name, gender, id_number, phone, password, role, user_pic) " +
+            "values (#{name}, #{gender}, #{idNumber}, #{phone}, #{password}, #{role}, #{userPic})")
+    void newStaff(@Param("name") String name,
+                  @Param("gender") Gender gender,
+                  @Param("idNumber") String idNumber,
+                  @Param("phone") String phone,
+                  @Param("password") String password,
+                  @Param("role") Role role,
+                  @Param("userPic") String userPic);
 }

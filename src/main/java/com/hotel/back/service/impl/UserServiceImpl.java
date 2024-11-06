@@ -5,12 +5,14 @@ import com.hotel.back.constant.enums.Role;
 import com.hotel.back.entity.User;
 import com.hotel.back.mapper.UserMapper;
 import com.hotel.back.service.UserService;
+import com.hotel.back.utils.Md5Util;
 import com.hotel.back.utils.SMS;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 @Service    // 将当前对象注册到Service层
 public class UserServiceImpl implements UserService {
@@ -63,5 +65,27 @@ public class UserServiceImpl implements UserService {
         userMapper.changePassword(phone, password);
     }
 
+    @Override
+    public ArrayList<User> getStaff() {
+        return userMapper.getStaff();
+    }
 
+    @Override
+    public void setStaff(int userId, String name, Gender gender, String idNumber, String phone){
+        userMapper.setStaff(userId, name, gender, idNumber, phone);
+    }
+
+    @Override
+    public void deleteStaff(int userId) {
+        userMapper.deleteStaff(userId);
+    }
+
+    @Override
+    public void newStaff(String name, Gender gender, String idNumber, String phone) {
+        Md5Util md5Util = new Md5Util();
+        String password = md5Util.getMD5("abc123");
+        Role role = Role.Staff;
+        String userPic = "default";
+        userMapper.newStaff(name, gender, idNumber, phone, password, role, userPic);
+    }
 }
