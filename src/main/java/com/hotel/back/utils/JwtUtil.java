@@ -3,6 +3,7 @@ package com.hotel.back.utils;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.hotel.back.constant.enums.Role;
 import com.hotel.back.entity.User;
 
 import java.util.Date;
@@ -54,6 +55,17 @@ public class JwtUtil {
         }
         else{
             return mp.get("phone").toString();
+        }
+    }
+
+    public static String getRoleFromToken(String token) {
+        Map<String, Object> mp = parseToken(token);
+        String err = mp.get("Error").toString();
+        if(!err.equals("null")){
+            return null;
+        }
+        else{
+            return mp.get("role").toString();
         }
     }
 }
