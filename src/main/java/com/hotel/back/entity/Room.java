@@ -11,6 +11,6 @@ public class Room {
     private Integer roomId;
     private String roomNumber;
     private RoomType roomType;
-    private RoomStatus roomStatus;
+    private RoomStatus status;
     private BigDecimal roomPrice;
 }

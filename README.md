@@ -37,6 +37,7 @@
 ### 4. 账单表 (`bills`)
 - `bill_id` 账单编号 (INT, PRIMARY KEY, AUTO_INCREMENT)
 - `reservation_id` 预定账单编号 (INT, FOREIGN KEY REFERENCES `reservations(reservation_id)`)
+- `room_id` 居住房间号 (INT, FOREIGN KEY REFERENCES `rooms(room_id)`)
 - `amount` 总价 (DECIMAL)
 - `payment_status` 支付状态 (ENUM('Paid', 'Unpaid'))
 - `issued_date` 支付日期 (DATE)
@@ -49,12 +50,6 @@
 - `comments` 反馈信息 (TEXT)
 - `submitted_date` 提交时间 (DATE)
 
-### 6. 库存表 (`inventory`)
-- `item_id` 货物编号 (INT, PRIMARY KEY, AUTO_INCREMENT)
-- `item_name` 货物名称 (VARCHAR)
-- `quantity` 货物数量 (INT)
-- `unit_price` 货物单价 (DECIMAL)
-
 
 以下是各角色功能
 
@@ -66,12 +61,10 @@
 - 增减房屋
 - 房价设置
 - 账目信息查看统计
-- 消耗品信息
 
 ### 2. 员工(`staff`)
 - 处理预定信息
 - 处理结账信息
-- 处理物资信息
 
 ### 3. 顾客(`customer`)
 - 在线预定房间

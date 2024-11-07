@@ -9,6 +9,7 @@ import java.util.Date;
 public class Bill {
     private Integer billId;
     private Integer reservationId;
+    private Integer roomId;
     private BigDecimal amount;
     private Date issuedDate;
 }
