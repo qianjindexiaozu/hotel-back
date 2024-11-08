@@ -1,7 +1,5 @@
 package com.hotel.back.service;
 
-import java.sql.Date;
-
 public interface BillService {
-    Integer getBillIdByRoomIdAndBeforeDate(int roomId, Date date);
+    void newBill(int reservationId, int roomId, int userId, String name2, String idNumber2);
 }

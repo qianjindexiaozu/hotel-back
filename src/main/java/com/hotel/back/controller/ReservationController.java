@@ -4,12 +4,16 @@ import com.hotel.back.constant.enums.RoomType;
 import com.hotel.back.entity.Reservation;
 import com.hotel.back.entity.Result;
 import com.hotel.back.entity.User;
+import com.hotel.back.repository.CheckInInfo;
 import com.hotel.back.service.ReservationService;
 import com.hotel.back.service.UserService;
 import com.hotel.back.utils.JwtUtil;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 
 
@@ -56,5 +60,17 @@ public class ReservationController {
         }
         reservationService.cancelReservation(phone, reservationId);
         return Result.success();
+    }
+
+    @GetMapping("/getCheckInInfo")
+    public Result<ArrayList<CheckInInfo>> getCheckInInfo(@RequestParam String token){
+        String role = JwtUtil.getRoleFromToken(token);
+        if(role.equals("Staff")){
+            ArrayList<CheckInInfo> checkInInfos = reservationService.getCheckInInfo();
+            return Result.success(checkInInfos);
+        }
+        else {
+            return Result.error("需要职员账号");
+        }
     }
 }

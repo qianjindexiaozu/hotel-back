@@ -67,4 +67,7 @@ public interface UserMapper {
                   @Param("password") String password,
                   @Param("role") Role role,
                   @Param("userPic") String userPic);
+
+    @Select("select * from users where user_id=#{userId}")
+    User getUserById(@Param("userId") int userId);
 }

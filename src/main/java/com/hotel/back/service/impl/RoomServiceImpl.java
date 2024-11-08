@@ -69,4 +69,10 @@ public class RoomServiceImpl implements RoomService {
         Integer availableNumber = roomMapper.questRoom(checkInDate, checkOutDate, roomType, confirmedStatus);
         return availableNumber != 0;
     }
+
+    @Override
+    public ArrayList<Room> getAvailableRoom(RoomType roomType) {
+        RoomStatus roomStatus = RoomStatus.Available;
+        return roomMapper.getAvailableRoom(roomStatus, roomType);
+    }
 }

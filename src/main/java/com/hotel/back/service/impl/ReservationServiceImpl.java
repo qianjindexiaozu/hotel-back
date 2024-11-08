@@ -5,6 +5,7 @@ import com.hotel.back.constant.enums.RoomType;
 import com.hotel.back.entity.Reservation;
 import com.hotel.back.entity.User;
 import com.hotel.back.mapper.ReservationMapper;
+import com.hotel.back.repository.CheckInInfo;
 import com.hotel.back.service.ReservationService;
 import com.hotel.back.service.RoomService;
 import com.hotel.back.service.UserService;
@@ -45,11 +46,11 @@ public class ReservationServiceImpl implements ReservationService {
         // 计算两个日期之间的天数差
         long daysBetween = ChronoUnit.DAYS.between(checkInLocalDate, checkOutLocalDate);
         BigDecimal between = BigDecimal.valueOf(daysBetween);
-        BigDecimal account = roomService.getPriceByType(roomType).multiply(between)
+        BigDecimal amount = roomService.getPriceByType(roomType).multiply(between)
                                         .setScale(2, RoundingMode.HALF_UP);  // 保留2位小数，四舍五入;
 
 
-        reservationMapper.newReservation(u.getUserId(), roomType, checkInDate, checkOutDate, reservationStatus, account);
+        reservationMapper.newReservation(u.getUserId(), roomType, checkInDate, checkOutDate, reservationStatus, amount);
         SMS sms = new SMS();
         sms.sendInfo(phone, "confirmed");
     }
@@ -64,6 +65,17 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public ArrayList<Reservation> getReservations(int userId) {
-        return reservationMapper.getReservations(userId);
+        ReservationStatus reservationStatus = ReservationStatus.Confirmed;
+        return reservationMapper.getReservations(userId, reservationStatus);
+    }
+
+    @Override
+    public ArrayList<CheckInInfo> getCheckInInfo() {
+        return reservationMapper.getCheckInInfo();
+    }
+
+    @Override
+    public Reservation getReservationById(int reservationId) {
+        return reservationMapper.getReservationById(reservationId);
     }
 }

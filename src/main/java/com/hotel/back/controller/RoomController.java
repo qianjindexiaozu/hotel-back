@@ -124,7 +124,18 @@ public class RoomController {
         else{
             return Result.error("所选日期范围房间不足");
         }
-
     }
 
+    @GetMapping("/getAvailableRoom")
+    public Result<ArrayList<Room>> getAvailableRoom(@RequestParam String token,
+                                                    @RequestParam RoomType roomType){
+        String role = JwtUtil.getRoleFromToken(token);
+        if(role.equals("Staff")){
+            ArrayList<Room> rooms = roomService.getAvailableRoom(roomType);
+            return Result.success(rooms);
+        }
+        else {
+            return Result.error("需要职员账号");
+        }
+    }
 }

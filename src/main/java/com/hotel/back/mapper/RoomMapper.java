@@ -56,4 +56,8 @@ public interface RoomMapper {
                       @Param("checkOutDate") Date checkOutDate,
                       @Param("roomType") RoomType roomType,
                       @Param("reservationStatus")ReservationStatus confirmedStatus);
+
+    @Select("select * from rooms where room_type=#{roomType} and status=#{status}")
+    ArrayList<Room> getAvailableRoom(@Param("status") RoomStatus status,
+                                     @Param("roomType") RoomType roomType);
 }

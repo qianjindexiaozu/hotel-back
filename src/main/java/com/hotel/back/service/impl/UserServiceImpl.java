@@ -88,4 +88,9 @@ public class UserServiceImpl implements UserService {
         String userPic = "default";
         userMapper.newStaff(name, gender, idNumber, phone, password, role, userPic);
     }
+
+    @Override
+    public User getUserById(int userId) {
+        return userMapper.getUserById(userId);
+    }
 }

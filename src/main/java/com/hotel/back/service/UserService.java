@@ -18,4 +18,5 @@ public interface UserService {
     void setStaff(int userId, String name, Gender gender, String idNumber, String phone);
     void deleteStaff(int userId);
     void newStaff(String name, Gender gender, String idNumber, String phone);
+    User getUserById(int userId);
 }
