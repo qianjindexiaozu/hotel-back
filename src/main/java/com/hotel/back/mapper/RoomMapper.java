@@ -1,5 +1,6 @@
 package com.hotel.back.mapper;
 
+import com.hotel.back.constant.enums.ReservationStatus;
 import com.hotel.back.constant.enums.RoomStatus;
 import com.hotel.back.constant.enums.RoomType;
 import com.hotel.back.entity.Price;
@@ -8,6 +9,7 @@ import com.hotel.back.utils.BigDecimalTypeHandler;
 import org.apache.ibatis.annotations.*;
 
 import java.math.BigDecimal;
+import java.sql.Date;
 import java.util.ArrayList;
 
 @Mapper
@@ -19,6 +21,9 @@ public interface RoomMapper {
                     typeHandler = BigDecimalTypeHandler.class)
     })
     ArrayList<Price> getPrice();
+
+    @Select("select room_price from price where room_type=#{roomType}")
+    BigDecimal getPriceByType(@Param("roomType") RoomType roomType);
 
     @Update("update price set room_price=#{bd} where room_type=#{roomType}")
     void setPrice(@Param("roomType")RoomType roomType,
@@ -43,4 +48,12 @@ public interface RoomMapper {
     void newRoom(@Param("roomNumber") String roomNumber,
                  @Param("roomType") RoomType roomType,
                  @Param("status") RoomStatus status);
+
+    @Select("select count(*) from rooms r where r.room_type=#{roomType} and not exists " +
+            "(select * from reservations res where res.room_type=#{roomType} and res.reservation_status=#{confirmedStatus} and " +
+            " res.check_in_date<#{checkOutDate} and res.check_out_date>#{checkInDate})")
+    Integer questRoom(@Param("checkInDate") Date checkInDate,
+                      @Param("checkOutDate") Date checkOutDate,
+                      @Param("roomType") RoomType roomType,
+                      @Param("confirmedStatus")ReservationStatus confirmedStatus);
 }

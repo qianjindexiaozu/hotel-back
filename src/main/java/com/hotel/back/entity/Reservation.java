@@ -1,5 +1,6 @@
 package com.hotel.back.entity;
 
+import com.hotel.back.constant.enums.FeedbackStatus;
 import com.hotel.back.constant.enums.ReservationStatus;
 import com.hotel.back.constant.enums.RoomType;
 import lombok.Data;
@@ -14,4 +15,5 @@ public class Reservation {
     private Date checkInDate;
     private Date checkOutDate;
     private ReservationStatus reservationStatus;
+    private FeedbackStatus feedBackStatus;
 }

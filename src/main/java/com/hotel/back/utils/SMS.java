@@ -78,4 +78,49 @@ public class SMS {
         }
         return result;
     }
+
+    public String sendInfo(String phone, String condition) throws Exception {
+        com.aliyun.dysmsapi20170525.Client client = createClient();
+        System.out.println(phone);
+
+
+        com.aliyun.dysmsapi20170525.models.SendSmsRequest sendSmsRequest;
+        if(condition.equals("confirmed")){
+            sendSmsRequest = new com.aliyun.dysmsapi20170525.models.SendSmsRequest()
+                    .setSignName("前进的小卒")
+                    .setTemplateCode("SMS_475245044")
+                    .setPhoneNumbers(phone)
+                    .setTemplateParam("{\"name\":\"酒店\"}");
+        }
+        else{
+            sendSmsRequest = new com.aliyun.dysmsapi20170525.models.SendSmsRequest()
+                    .setSignName("前进的小卒")
+                    .setTemplateCode("SMS_475230056")
+                    .setPhoneNumbers(phone)
+                    .setTemplateParam("{\"name\":\"酒店\"}");
+        }
+        String result = null;
+        com.aliyun.teautil.models.RuntimeOptions runtime = new com.aliyun.teautil.models.RuntimeOptions();
+        try {
+            // 复制代码运行请自行打印 API 的返回值
+            result = client.sendSmsWithOptions(sendSmsRequest, runtime).getBody().getCode();
+        } catch (TeaException error) {
+            // 此处仅做打印展示，请谨慎对待异常处理，在工程项目中切勿直接忽略异常。
+            // 错误 message
+            System.out.println(error.getMessage());
+            // 诊断地址
+            System.out.println(error.getData().get("Recommend"));
+            com.aliyun.teautil.Common.assertAsString(error.message);
+        } catch (Exception _error) {
+            TeaException error = new TeaException(_error.getMessage(), _error);
+            // 此处仅做打印展示，请谨慎对待异常处理，在工程项目中切勿直接忽略异常。
+            // 错误 message
+            System.out.println(error.getMessage());
+            // 诊断地址
+            System.out.println(error.getData().get("Recommend"));
+            com.aliyun.teautil.Common.assertAsString(error.message);
+        }
+        System.out.println(result);
+        return result;
+    }
 }

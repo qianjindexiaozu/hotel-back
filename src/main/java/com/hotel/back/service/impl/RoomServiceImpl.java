@@ -1,28 +1,24 @@
 package com.hotel.back.service.impl;
 
+import com.hotel.back.constant.enums.ReservationStatus;
 import com.hotel.back.constant.enums.RoomStatus;
 import com.hotel.back.constant.enums.RoomType;
 import com.hotel.back.entity.Price;
 import com.hotel.back.entity.Result;
 import com.hotel.back.entity.Room;
 import com.hotel.back.mapper.RoomMapper;
-import com.hotel.back.service.BillService;
 import com.hotel.back.service.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.sql.Date;
-import java.time.LocalDate;
 import java.util.ArrayList;
 
 @Service
 public class RoomServiceImpl implements RoomService {
     @Autowired
     private RoomMapper roomMapper;
-
-    @Autowired
-    private BillService billService;
 
     @Override
     public Room getRoomByRoomNumber(String roomNumber) {
@@ -32,6 +28,11 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public ArrayList<Price> getPrice() {
         return roomMapper.getPrice();
+    }
+
+    @Override
+    public BigDecimal getPriceByType(RoomType roomType) {
+        return roomMapper.getPriceByType(roomType);
     }
 
     @Override
@@ -51,20 +52,21 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public Result<String> deleteRoom(int roomId) {
-        LocalDate localDate = LocalDate.now();
-        Date date = Date.valueOf(localDate);
-        Integer billId = billService.getBillIdByRoomIdAndBeforeDate(roomId, date);
-        if(billId == null){
-            roomMapper.deleteRoom(roomId);
-            return Result.success();
-        }
-        else{
-            return Result.error("该房间有订单正在使用");
-        }
+        roomMapper.deleteRoom(roomId);
+        return Result.success();
     }
 
     @Override
     public void newRoom(String roomNumber, RoomType roomType, RoomStatus status) {
-            roomMapper.newRoom(roomNumber, roomType, status);
+        roomMapper.newRoom(roomNumber, roomType, status);
+    }
+
+    @Override
+    public boolean questRoom(String inDate, String outDate, RoomType roomType) {
+        Date checkInDate = Date.valueOf(inDate);
+        Date checkOutDate = Date.valueOf(outDate);
+        ReservationStatus confirmedStatus = ReservationStatus.Confirmed;
+        Integer availableNumber = roomMapper.questRoom(checkInDate, checkOutDate, roomType, confirmedStatus);
+        return availableNumber != 0;
     }
 }

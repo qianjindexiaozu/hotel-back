@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Map;
 
 @RestController
 @ResponseBody
@@ -24,14 +26,12 @@ public class RoomController {
 
     @GetMapping("/price")
     public Result<ArrayList<Price>> getPrice(@RequestParam String token){
-        String role = JwtUtil.getRoleFromToken(token);
-        if(role.equals("Admin")){
-            ArrayList<Price> prices = roomService.getPrice();
-            return Result.success(prices);
+        Map<String, Object> mp = JwtUtil.parseToken(token);
+        if(!mp.get("Error").toString().equals("null")){
+            return Result.error(mp.get("Error").toString());
         }
-        else {
-            return Result.error("需要管理员账号");
-        }
+        ArrayList<Price> prices = roomService.getPrice();
+        return Result.success(prices);
     }
 
     @PutMapping("/set_price")
@@ -107,4 +107,24 @@ public class RoomController {
             return Result.error("需要管理员账号");
         }
     }
+
+    @GetMapping("/quest")
+    public Result<String> questRoom(@RequestParam String token,
+                                    @RequestParam String checkInDate,
+                                    @RequestParam String checkOutDate,
+                                    @RequestParam RoomType roomType){
+        Map<String, Object> mp = JwtUtil.parseToken(token);
+        if(!mp.get("Error").toString().equals("null")){
+            return Result.error(mp.get("Error").toString());
+        }
+        boolean isAvailable = roomService.questRoom(checkInDate, checkOutDate, roomType);
+        if(isAvailable){
+            return Result.success();
+        }
+        else{
+            return Result.error("所选日期范围房间不足");
+        }
+
+    }
+
 }
