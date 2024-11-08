@@ -50,10 +50,10 @@ public interface RoomMapper {
                  @Param("status") RoomStatus status);
 
     @Select("select count(*) from rooms r where r.room_type=#{roomType} and not exists " +
-            "(select * from reservations res where res.room_type=#{roomType} and res.reservation_status=#{confirmedStatus} and " +
+            "(select * from reservations res where res.room_type=#{roomType} and res.reservation_status=#{reservationStatus} and " +
             " res.check_in_date<#{checkOutDate} and res.check_out_date>#{checkInDate})")
     Integer questRoom(@Param("checkInDate") Date checkInDate,
                       @Param("checkOutDate") Date checkOutDate,
                       @Param("roomType") RoomType roomType,
-                      @Param("confirmedStatus")ReservationStatus confirmedStatus);
+                      @Param("reservationStatus")ReservationStatus confirmedStatus);
 }

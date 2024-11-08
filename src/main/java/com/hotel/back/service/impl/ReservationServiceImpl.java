@@ -2,6 +2,7 @@ package com.hotel.back.service.impl;
 
 import com.hotel.back.constant.enums.ReservationStatus;
 import com.hotel.back.constant.enums.RoomType;
+import com.hotel.back.entity.Reservation;
 import com.hotel.back.entity.User;
 import com.hotel.back.mapper.ReservationMapper;
 import com.hotel.back.service.ReservationService;
@@ -16,6 +17,7 @@ import java.math.RoundingMode;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 
 @Service
 public class ReservationServiceImpl implements ReservationService {
@@ -50,5 +52,18 @@ public class ReservationServiceImpl implements ReservationService {
         reservationMapper.newReservation(u.getUserId(), roomType, checkInDate, checkOutDate, reservationStatus, account);
         SMS sms = new SMS();
         sms.sendInfo(phone, "confirmed");
+    }
+
+    @Override
+    public void cancelReservation(String phone, int ReservationId) throws Exception {
+        ReservationStatus reservationStatus = ReservationStatus.Canceled;
+        reservationMapper.cancelReservation(ReservationId, reservationStatus);
+        SMS sms = new SMS();
+        sms.sendInfo(phone, "cancel");
+    }
+
+    @Override
+    public ArrayList<Reservation> getReservations(int userId) {
+        return reservationMapper.getReservations(userId);
     }
 }

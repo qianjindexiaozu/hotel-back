@@ -1,14 +1,14 @@
 package com.hotel.back.mapper;
 
-import com.hotel.back.constant.enums.FeedbackStatus;
 import com.hotel.back.constant.enums.ReservationStatus;
 import com.hotel.back.constant.enums.RoomType;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
+import com.hotel.back.entity.Reservation;
+import com.hotel.back.utils.BigDecimalTypeHandler;
+import org.apache.ibatis.annotations.*;
 
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.util.ArrayList;
 
 @Mapper
 public interface ReservationMapper {
@@ -21,4 +21,16 @@ public interface ReservationMapper {
                         @Param("checkOutDate") Date checkOutDate,
                         @Param("reservationStatus")ReservationStatus reservationStatus,
                         @Param("account")BigDecimal account);
+
+    @Update("update reservations set reservation_status=#{reservationStatus} where reservation_id=#{reservationId}")
+    void cancelReservation(@Param("reservationId") int reservationId,
+                           @Param("reservationStatus") ReservationStatus reservationStatus);
+
+    @Select("select * from reservations where user_id=#{userId}")
+    @Results({
+            @Result(property = "account", column = "account",
+                    javaType = BigDecimal.class,
+                    typeHandler = BigDecimalTypeHandler.class)
+    })
+    ArrayList<Reservation> getReservations(@Param("userId") int userId);
 }
