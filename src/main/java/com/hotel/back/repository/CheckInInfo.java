@@ -16,5 +16,5 @@ public class CheckInInfo {
     private RoomType roomType;
     private Date checkInDate;
     private Date checkOutDate;
-    private BigDecimal account;
+    private BigDecimal amount;
 }

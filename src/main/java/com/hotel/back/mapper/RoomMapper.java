@@ -60,4 +60,8 @@ public interface RoomMapper {
     @Select("select * from rooms where room_type=#{roomType} and status=#{status}")
     ArrayList<Room> getAvailableRoom(@Param("status") RoomStatus status,
                                      @Param("roomType") RoomType roomType);
+
+    @Update("update rooms set status=#{status} where room_id=#{roomId}")
+    void setRoomStatus(@Param("roomId") int roomId,
+                       @Param("status") RoomStatus roomStatus);
 }

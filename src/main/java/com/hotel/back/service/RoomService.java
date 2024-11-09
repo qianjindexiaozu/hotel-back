@@ -21,4 +21,5 @@ public interface RoomService {
     void newRoom(String roomNumber, RoomType roomType, RoomStatus status);
     boolean questRoom(String checkInDate, String checkOutDate, RoomType roomType);
     ArrayList<Room> getAvailableRoom(RoomType roomType);
+    void setRoomStatus(int roomId, RoomStatus roomStatus);
 }

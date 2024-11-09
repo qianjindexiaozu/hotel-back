@@ -71,7 +71,9 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public ArrayList<CheckInInfo> getCheckInInfo() {
-        return reservationMapper.getCheckInInfo();
+        LocalDate localDate = LocalDate.now();
+        Date today = Date.valueOf(localDate);
+        return reservationMapper.getCheckInInfo(today);
     }
 
     @Override

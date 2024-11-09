@@ -36,8 +36,8 @@ public interface ReservationMapper {
     ArrayList<Reservation> getReservations(@Param("userId") int userId,
                                            @Param("reservationStatus") ReservationStatus reservationStatus);
 
-    @Select("select * from checkininfo")
-    ArrayList<CheckInInfo> getCheckInInfo();
+    @Select("select * from checkininfo where check_in_date=#{today}")
+    ArrayList<CheckInInfo> getCheckInInfo(@Param("today") Date today);
 
     @Select("select * from reservations where reservation_id=#{reservationId}")
     Reservation getReservationById(@Param("reservationId") int reservationId);

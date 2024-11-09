@@ -75,4 +75,9 @@ public class RoomServiceImpl implements RoomService {
         RoomStatus roomStatus = RoomStatus.Available;
         return roomMapper.getAvailableRoom(roomStatus, roomType);
     }
+
+    @Override
+    public void setRoomStatus(int roomId, RoomStatus roomStatus) {
+        roomMapper.setRoomStatus(roomId, roomStatus);
+    }
 }

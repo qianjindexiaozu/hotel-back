@@ -18,7 +18,7 @@ public interface BillMapper {
     void newBill(@Param("reservationId") int reservationId,
                  @Param("roomId") int roomId,
                  @Param("name1") String name1,
-                 @Param("idNumber") String idNumber1,
+                 @Param("idNumber1") String idNumber1,
                  @Param("name2") String name2,
                  @Param("idNumber2") String idNumber2,
                  @Param("amount")BigDecimal amount,
