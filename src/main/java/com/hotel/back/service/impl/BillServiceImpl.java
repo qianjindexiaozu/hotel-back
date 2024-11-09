@@ -9,6 +9,7 @@ import com.hotel.back.entity.Reservation;
 import com.hotel.back.entity.User;
 import com.hotel.back.mapper.BillMapper;
 import com.hotel.back.repository.BillInfo;
+import com.hotel.back.repository.FeedbackInfo;
 import com.hotel.back.service.BillService;
 import com.hotel.back.service.ReservationService;
 import com.hotel.back.service.RoomService;
@@ -37,9 +38,13 @@ public class BillServiceImpl implements BillService {
     @Override
     public void newBill(int reservationId, int roomId, int userId, String name2, String idNumber2) {
         User u = userService.getUserById(userId);
+        System.out.println(userId);
         Reservation res = reservationService.getReservationById(reservationId);
         PaymentStatus paymentStatus = PaymentStatus.Unpaid;
         FeedbackStatus feedbackStatus = FeedbackStatus.Unfinished;
+        System.out.println(u);
+        System.out.println(u.getIdNumber());
+        System.out.println(res.getAmount());
         billMapper.newBill(reservationId, roomId, u.getName(), u.getIdNumber(), name2,
                             idNumber2, res.getAmount(), paymentStatus, feedbackStatus);
         RoomStatus roomStatus = RoomStatus.Occupied;
@@ -59,7 +64,9 @@ public class BillServiceImpl implements BillService {
     @Override
     public void confirmPayment(String phone, int billId) {
         PaymentStatus paymentStatus = PaymentStatus.Paid;
-        billMapper.confirmPayment(phone, billId, paymentStatus);
+        LocalDate localDate = LocalDate.now();
+        Date today = Date.valueOf(localDate);
+        billMapper.confirmPayment(phone, billId, paymentStatus, today);
     }
 
     @Override
@@ -82,6 +89,29 @@ public class BillServiceImpl implements BillService {
         RoomStatus roomStatus = RoomStatus.Available;
         reservationService.setReservationStatus(reservationId, reservationStatus);
         roomService.setRoomStatus(roomId, roomStatus);
+    }
+
+    @Override
+    public void setFeedback(String phone, int billId, float rating, String comments) {
+        FeedbackStatus feedbackStatus = FeedbackStatus.Finished;
+        BillInfo billInfo = billMapper.getBillInfoById(billId);
+        int userId = billInfo.getUserId();
+        int roomId = billInfo.getRoomId();
+        LocalDate localDate = LocalDate.now();
+        Date today = Date.valueOf(localDate);
+        billMapper.setFeedback(userId, roomId, billId, rating, comments, today);
+        billMapper.setFeedbackStatus(phone, billId, feedbackStatus);
+    }
+
+    @Override
+    public ArrayList<FeedbackInfo> getFeedback() {
+        return billMapper.getFeedback();
+    }
+
+    @Override
+    public ArrayList<BillInfo> getPaidBillInfo() {
+        PaymentStatus paymentStatus = PaymentStatus.Paid;
+        return billMapper.getPaidBillInfo(paymentStatus);
     }
 
 

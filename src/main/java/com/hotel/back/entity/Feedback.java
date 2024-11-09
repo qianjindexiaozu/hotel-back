@@ -1,6 +1,5 @@
 package com.hotel.back.entity;
 
-import com.hotel.back.constant.enums.Rating;
 import lombok.Data;
 
 import java.util.Date;
@@ -10,7 +9,7 @@ public class Feedback {
     private Integer feedbackId;
     private Integer userId;
     private Integer roomId;
-    private Rating rating;
+    private Float rating;
     private String text;
     private Date submittedDate;
 }

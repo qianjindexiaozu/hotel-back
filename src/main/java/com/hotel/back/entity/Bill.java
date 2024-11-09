@@ -1,5 +1,6 @@
 package com.hotel.back.entity;
 
+import com.hotel.back.constant.enums.FeedbackStatus;
 import com.hotel.back.constant.enums.PaymentStatus;
 import lombok.Data;
 
@@ -18,4 +19,5 @@ public class Bill {
     private BigDecimal amount;
     private PaymentStatus paymentStatus;
     private Date issuedDate;
+    private FeedbackStatus feedbackStatus;
 }

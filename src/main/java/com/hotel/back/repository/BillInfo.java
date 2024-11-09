@@ -14,6 +14,8 @@ public class BillInfo {
     private int billId;
     private int reservationId;
     private int userId;
+    private int roomId;
+    private String roomNumber;
     private String name1;
     private String idNumber1;
     private String phone;
@@ -24,6 +26,7 @@ public class BillInfo {
     private Date checkOutDate;
     private BigDecimal amount;
     private PaymentStatus paymentStatus;
+    private Date issuedDate;
     private FeedbackStatus feedbackStatus;
     private ReservationStatus reservationStatus;
 }

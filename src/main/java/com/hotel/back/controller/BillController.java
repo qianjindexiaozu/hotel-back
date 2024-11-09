@@ -1,14 +1,12 @@
 package com.hotel.back.controller;
 
-import com.hotel.back.constant.enums.PaymentStatus;
-import com.hotel.back.constant.enums.ReservationStatus;
-import com.hotel.back.constant.enums.RoomStatus;
+import com.hotel.back.constant.enums.*;
 import com.hotel.back.entity.Bill;
 import com.hotel.back.entity.Reservation;
 import com.hotel.back.entity.Result;
 import com.hotel.back.entity.Room;
 import com.hotel.back.repository.BillInfo;
-import com.hotel.back.repository.CheckInInfo;
+import com.hotel.back.repository.FeedbackInfo;
 import com.hotel.back.service.BillService;
 import com.hotel.back.service.ReservationService;
 import com.hotel.back.service.RoomService;
@@ -40,7 +38,7 @@ public class BillController {
                           @RequestParam String idNumber2){
         String role = JwtUtil.getRoleFromToken(token);
         if(role.equals("Staff")){
-            billService.newBill(reservationId, userId, roomId, name2, idNumber2);
+            billService.newBill(reservationId, roomId, userId, name2, idNumber2);
             Bill b = billService.getBillByReservationId(reservationId);
             if(b == null){
                 return Result.error("入住失败");
@@ -119,4 +117,48 @@ public class BillController {
         }
     }
 
+    @PostMapping("/setFeedback")
+    public Result<String> setFeedback(@RequestParam String token,
+                                      @RequestParam int billId,
+                                      @RequestParam float rating,
+                                      @RequestParam String feedbackText){
+        String phone = JwtUtil.getPhoneFromToken(token);
+        if(phone == null){
+            return Result.error("token已过期，请重新登陆");
+        }
+        else{
+            billService.setFeedback(phone, billId, rating, feedbackText);
+            Bill b = billService.getBillById(billId);
+            if(b.getFeedbackStatus().equals(FeedbackStatus.Finished)){
+                return Result.success();
+            }
+            else{
+                return Result.error("评价出错");
+            }
+        }
+    }
+
+    @GetMapping("/getFeedback")
+    public Result<ArrayList<FeedbackInfo>> getFeedbackInfo(@RequestParam String token){
+        String role = JwtUtil.getRoleFromToken(token);
+        if(role.equals("Admin")){
+            ArrayList<FeedbackInfo> feedbackInfos = billService.getFeedback();
+            return Result.success(feedbackInfos);
+        }
+        else{
+            return Result.error("需要管理员账号");
+        }
+    }
+
+    @GetMapping("/getPaidBillInfo")
+    public Result<ArrayList<BillInfo>> getPaidBillInfo(@RequestParam String token){
+        String role = JwtUtil.getRoleFromToken(token);
+        if(role.equals("Admin")){
+            ArrayList<BillInfo> billInfos = billService.getPaidBillInfo();
+            return Result.success(billInfos);
+        }
+        else{
+            return Result.error("需要管理员账号");
+        }
+    }
 }

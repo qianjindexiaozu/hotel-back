@@ -2,6 +2,7 @@ package com.hotel.back.service;
 
 import com.hotel.back.entity.Bill;
 import com.hotel.back.repository.BillInfo;
+import com.hotel.back.repository.FeedbackInfo;
 
 import java.util.ArrayList;
 
@@ -13,4 +14,7 @@ public interface BillService {
     Bill getBillById(int billId);
     ArrayList<BillInfo> getCheckOutInfo();
     void leave(int billId);
+    void setFeedback(String phone, int billId, float rating, String comments);
+    ArrayList<FeedbackInfo> getFeedback();
+    ArrayList<BillInfo> getPaidBillInfo();
 }

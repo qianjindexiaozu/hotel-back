@@ -5,9 +5,11 @@ import com.hotel.back.constant.enums.PaymentStatus;
 import com.hotel.back.constant.enums.ReservationStatus;
 import com.hotel.back.entity.Bill;
 import com.hotel.back.repository.BillInfo;
+import com.hotel.back.repository.FeedbackInfo;
 import org.apache.ibatis.annotations.*;
 
 import java.math.BigDecimal;
+import java.sql.Date;
 import java.util.ArrayList;
 
 @Mapper
@@ -31,14 +33,38 @@ public interface BillMapper {
     @Select("select * from bill_info where phone=#{phone}")
     ArrayList<BillInfo> getBillInfo(@Param("phone") String phone);
 
-    @Update("update bill_info set payment_status=#{paymentStatus} where phone=#{phone} and bill_id=#{billId}")
+    @Update("update bill_info set payment_status=#{paymentStatus}, issued_date=#{issuedDate} where phone=#{phone} and bill_id=#{billId}")
     void confirmPayment(@Param("phone") String phone,
                         @Param("billId") int billId,
-                        @Param("paymentStatus") PaymentStatus paymentStatus);
+                        @Param("paymentStatus") PaymentStatus paymentStatus,
+                        @Param("issuedDate")Date today);
 
     @Select("select * from bills where bill_id=#{billId}")
     Bill getBillById(@Param("billId") int billId);
 
     @Select("select * from bill_info where reservation_status=#{reservationStatus}")
     ArrayList<BillInfo> getCheckOutInfo(@Param("reservationStatus")ReservationStatus reservationStatus);
+
+    @Select("select * from bill_info where bill_id=#{billId}")
+    BillInfo getBillInfoById(@Param("billId") int billId);
+
+    @Insert("insert into feedback (user_id, room_id, bill_id, rating, comments, submitted_date)" +
+            "values (#{userId}, #{roomId}, #{billId}, #{rating}, #{commits}, #{submittedDate})")
+    void setFeedback(@Param("userId")int userId,
+                     @Param("roomId")int roomId,
+                     @Param("billId")int billId,
+                     @Param("rating")float rating,
+                     @Param("commits")String commits,
+                     @Param("submittedDate")Date submittedDate);
+
+    @Update("update bill_info set feedback_status=#{feedbackStatus} where bill_id=#{billId} and phone=#{phone}")
+    void setFeedbackStatus(@Param("phone") String phone,
+                           @Param("billId") int billId,
+                           @Param("feedbackStatus") FeedbackStatus feedbackStatus);
+
+    @Select("select * from feedback_info")
+    ArrayList<FeedbackInfo> getFeedback();
+
+    @Select("select * from bill_info where payment_status=#{paymentStatus}")
+    ArrayList<BillInfo> getPaidBillInfo(@Param("paymentStatus") PaymentStatus paymentStatus);
 }
