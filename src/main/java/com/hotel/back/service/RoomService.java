@@ -17,9 +17,10 @@ public interface RoomService {
     void setPrice(RoomType roomType, BigDecimal bd);
     ArrayList<Room> getRoom();
     void setRoom(int roomId, String roomNumber, RoomType roomType, RoomStatus status);
-    Result<String> deleteRoom(int roomId);
+    void deleteRoom(int roomId);
     void newRoom(String roomNumber, RoomType roomType, RoomStatus status);
     boolean questRoom(String checkInDate, String checkOutDate, RoomType roomType);
     ArrayList<Room> getAvailableRoom(RoomType roomType);
     void setRoomStatus(int roomId, RoomStatus roomStatus);
+    Room getRoomById(int roomId);
 }

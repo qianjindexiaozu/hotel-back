@@ -40,7 +40,12 @@ public class RoomController {
         if(role.equals("Admin")){
             BigDecimal bd = new BigDecimal(price).setScale(2, RoundingMode.HALF_UP);
             roomService.setPrice(roomType, bd);
-            return Result.success();
+            if(roomService.getPriceByType(roomType).equals(bd)){
+                return Result.success();
+            }
+            else{
+                return  Result.error("修改时出错");
+            }
         }
         else {
             return Result.error("需要管理员账号");
@@ -68,7 +73,14 @@ public class RoomController {
         String role = JwtUtil.getRoleFromToken(token);
         if(role.equals("Admin")){
             roomService.setRoom(roomId, roomNumber, roomType, status);
-            return Result.success();
+            Room room = roomService.getRoomById(roomId);
+            if(room.getRoomNumber().equals(roomNumber) && room.getRoomType().equals(roomType)
+            && room.getStatus().equals(status)){
+                return Result.success();
+            }
+            else{
+                return Result.error("修改时出错");
+            }
         }
         else {
             return Result.error("需要管理员账号");
@@ -80,7 +92,14 @@ public class RoomController {
                                      @RequestParam int roomId){
         String role = JwtUtil.getRoleFromToken(token);
         if(role.equals("Admin")){
-            return roomService.deleteRoom(roomId);
+            roomService.deleteRoom(roomId);
+            Room r = roomService.getRoomById(roomId);
+            if(r == null){
+                return Result.success();
+            }
+            else {
+                return Result.error("删除失败");
+            }
         }
         else {
             return Result.error("需要管理员账号");
@@ -97,7 +116,13 @@ public class RoomController {
             Room r = roomService.getRoomByRoomNumber(roomNumber);
             if (r == null){
                 roomService.newRoom(roomNumber, roomType, status);
-                return Result.success();
+                r = roomService.getRoomByRoomNumber(roomNumber);
+                if(r == null){
+                    return Result.error("新建房间失败");
+                }
+                else{
+                    return Result.success();
+                }
             }
             else {
                 return Result.error("房间代号重复");

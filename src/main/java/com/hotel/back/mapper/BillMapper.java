@@ -2,13 +2,12 @@ package com.hotel.back.mapper;
 
 import com.hotel.back.constant.enums.FeedbackStatus;
 import com.hotel.back.constant.enums.PaymentStatus;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import com.hotel.back.entity.Bill;
+import com.hotel.back.repository.BillInfo;
+import org.apache.ibatis.annotations.*;
 
 import java.math.BigDecimal;
-import java.sql.Date;
+import java.util.ArrayList;
 
 @Mapper
 public interface BillMapper {
@@ -24,4 +23,18 @@ public interface BillMapper {
                  @Param("amount")BigDecimal amount,
                  @Param("paymentStatus")PaymentStatus paymentStatus,
                  @Param("feedbackStatus")FeedbackStatus feedbackStatus);
+
+    @Select("select * from bills where reservation_id=#{reservationId}")
+    Bill getBillByReservationId(@Param("reservationId") int reservationId);
+
+    @Select("select * from bill_info where phone=#{phone}")
+    ArrayList<BillInfo> getBillInfo(@Param("phone") String phone);
+
+    @Update("update bill_info set payment_status=#{paymentStatus} where phone=#{phone} and bill_id=#{billId}")
+    void confirmPayment(@Param("phone") String phone,
+                        @Param("billId") int billId,
+                        @Param("paymentStatus") PaymentStatus paymentStatus);
+
+    @Select("select * from bills where bill_id=#{billId}")
+    Bill getBillById(@Param("billId") int billId);
 }

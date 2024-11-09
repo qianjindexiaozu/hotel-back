@@ -12,4 +12,5 @@ public interface ReservationService {
     ArrayList<Reservation> getReservations(int userId);
     ArrayList<CheckInInfo> getCheckInInfo();
     Reservation getReservationById(int reservationId);
+    int countReservationByDetail(int userId, String inDate, String outDate, RoomType roomType);
 }

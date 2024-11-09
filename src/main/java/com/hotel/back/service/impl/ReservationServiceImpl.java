@@ -65,8 +65,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public ArrayList<Reservation> getReservations(int userId) {
-        ReservationStatus reservationStatus = ReservationStatus.Confirmed;
-        return reservationMapper.getReservations(userId, reservationStatus);
+        return reservationMapper.getReservations(userId);
     }
 
     @Override
@@ -79,5 +78,12 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public Reservation getReservationById(int reservationId) {
         return reservationMapper.getReservationById(reservationId);
+    }
+
+    @Override
+    public int countReservationByDetail(int userId, String inDate, String outDate, RoomType roomType) {
+        Date checkInDate = Date.valueOf(inDate);
+        Date checkOutDate = Date.valueOf(outDate);
+        return reservationMapper.countReservationByDetail(userId, checkInDate, checkOutDate, roomType);
     }
 }

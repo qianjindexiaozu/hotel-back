@@ -105,7 +105,13 @@ public class UserController {
         RedisUtil redisUtil = new RedisUtil();
         if(verifyCode.equals(redisUtil.getValue(phone))){
             userService.forget(phone, password);
-            return Result.success();
+            User u = userService.getUserByPhone(phone);
+            if(u.getPassword().equals(password)){
+                return Result.success();
+            }
+            else{
+                return Result.error("密码修改失败");
+            }
         }
         else{
             return Result.error("验证码错误！请重新获取验证码注册！");
@@ -176,10 +182,15 @@ public class UserController {
         userService.changePic(phone, filename);
         User u = userService.getUserByPhone(phone);
 
-        token = JwtUtil.genTokenByUser(u);
+        if(u.getUserPic().equals(filename)){
+            token = JwtUtil.genTokenByUser(u);
+            // 返回文件名或其他信息
+            return Result.success(token);
+        }
+        else{
+            return Result.error("头像修改失败");
+        }
 
-        // 返回文件名或其他信息
-        return Result.success(token);
     }
 
 
@@ -209,8 +220,18 @@ public class UserController {
         if(verifyCode.equals(redisUtil.getValue(phone))){
             userService.changeInfo(name, gender, idNumber, phone, originalPhone);
             User u = userService.getUserByPhone(phone);
-            token = JwtUtil.genTokenByUser(u);
-            return Result.success(token);
+            if(u == null){
+                return Result.error("修改信息出错，请重新登陆");
+            }
+            if(u.getName().equals(name) && u.getGender().equals(gender)
+            && u.getIdNumber().equals(idNumber)){
+                token = JwtUtil.genTokenByUser(u);
+                return Result.success(token);
+            }
+            else {
+                return Result.error("修改信息出错，请重新登陆");
+            }
+
         }
         else{
             return Result.error("验证码错误！请重新获取验证码并验证！");
@@ -224,7 +245,13 @@ public class UserController {
             return Result.error("token验证有误，请重新登陆");
         }
         userService.changePassword(phone, password);
-        return Result.success();
+        User u = userService.getUserByPhone(phone);
+        if(u.getPassword().equals(password)){
+            return Result.success();
+        }
+        else{
+            return Result.error("密码修改失败");
+        }
     }
 
     @GetMapping("/get_staff")
@@ -249,7 +276,14 @@ public class UserController {
         String role = JwtUtil.getRoleFromToken(token);
         if(role.equals("Admin")){
             userService.setStaff(userId, name, gender, idNumber, phone);
-            return Result.success();
+            User u = userService.getUserById(userId);
+            if(u.getName().equals(name) && u.getGender().equals(gender) &&
+            u.getIdNumber().equals(idNumber) && u.getPhone().equals(phone)){
+                return Result.success();
+            }
+            else{
+                return Result.error("信息修改出错");
+            }
         }
         else {
             return Result.error("需要管理员账号");
@@ -261,7 +295,13 @@ public class UserController {
         String role = JwtUtil.getRoleFromToken(token);
         if(role.equals("Admin")){
             userService.deleteStaff(userId);
-            return Result.success();
+            User u = userService.getUserById(userId);
+            if(u == null){
+                return Result.success();
+            }
+            else{
+                return Result.error("删除失败");
+            }
         }
         else {
             return Result.error("需要管理员账号");
@@ -277,7 +317,14 @@ public class UserController {
         String role = JwtUtil.getRoleFromToken(token);
         if(role.equals("Admin")){
             userService.newStaff(name, gender, idNumber, phone);
-            return Result.success();
+            User u = userService.getUserByPhone(phone);
+            System.out.println(u);
+            if(u == null){
+                return Result.error("新建职员失败");
+            }
+            else{
+                return Result.success();
+            }
         }
         else {
             return Result.error("需要管理员账号");

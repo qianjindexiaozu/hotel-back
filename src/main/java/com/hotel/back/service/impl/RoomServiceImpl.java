@@ -51,9 +51,8 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public Result<String> deleteRoom(int roomId) {
+    public void deleteRoom(int roomId) {
         roomMapper.deleteRoom(roomId);
-        return Result.success();
     }
 
     @Override
@@ -66,8 +65,12 @@ public class RoomServiceImpl implements RoomService {
         Date checkInDate = Date.valueOf(inDate);
         Date checkOutDate = Date.valueOf(outDate);
         ReservationStatus confirmedStatus = ReservationStatus.Confirmed;
-        Integer availableNumber = roomMapper.questRoom(checkInDate, checkOutDate, roomType, confirmedStatus);
-        return availableNumber != 0;
+        RoomStatus roomStatus = RoomStatus.Maintenance;
+        int confirmedNumber = roomMapper.countNumber(checkInDate, checkOutDate, roomType, confirmedStatus);
+        int availableNumber = roomMapper.countAvailable(roomType, roomStatus);
+        System.out.println(confirmedNumber);
+        System.out.println(availableNumber);
+        return availableNumber > confirmedNumber;
     }
 
     @Override
@@ -79,5 +82,10 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public void setRoomStatus(int roomId, RoomStatus roomStatus) {
         roomMapper.setRoomStatus(roomId, roomStatus);
+    }
+
+    @Override
+    public Room getRoomById(int roomId) {
+        return roomMapper.getRoomById(roomId);
     }
 }

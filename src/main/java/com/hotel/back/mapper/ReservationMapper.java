@@ -27,18 +27,24 @@ public interface ReservationMapper {
     void cancelReservation(@Param("reservationId") int reservationId,
                            @Param("reservationStatus") ReservationStatus reservationStatus);
 
-    @Select("select * from reservations where user_id=#{userId} and reservation_status=#{reservationStatus}")
+    @Select("select * from checkininfo where user_id=#{userId}")
     @Results({
             @Result(property = "account", column = "account",
                     javaType = BigDecimal.class,
                     typeHandler = BigDecimalTypeHandler.class)
     })
-    ArrayList<Reservation> getReservations(@Param("userId") int userId,
-                                           @Param("reservationStatus") ReservationStatus reservationStatus);
+    ArrayList<Reservation> getReservations(@Param("userId") int userId);
 
     @Select("select * from checkininfo where check_in_date=#{today}")
     ArrayList<CheckInInfo> getCheckInInfo(@Param("today") Date today);
 
     @Select("select * from reservations where reservation_id=#{reservationId}")
     Reservation getReservationById(@Param("reservationId") int reservationId);
+
+    @Select("select count(*) from reservations where user_id=#{userId} and check_in_date=#{checkInDate} " +
+            "and check_out_date=#{checkOutDate} and room_type=#{roomType}")
+    int countReservationByDetail(@Param("userId") int userId,
+                                 @Param("checkInDate") Date checkInDate,
+                                 @Param("checkOutDate") Date checkOutDate,
+                                 @Param("roomType") RoomType roomType);
 }

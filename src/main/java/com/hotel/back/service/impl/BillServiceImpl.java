@@ -3,9 +3,11 @@ package com.hotel.back.service.impl;
 import com.hotel.back.constant.enums.FeedbackStatus;
 import com.hotel.back.constant.enums.PaymentStatus;
 import com.hotel.back.constant.enums.RoomStatus;
+import com.hotel.back.entity.Bill;
 import com.hotel.back.entity.Reservation;
 import com.hotel.back.entity.User;
 import com.hotel.back.mapper.BillMapper;
+import com.hotel.back.repository.BillInfo;
 import com.hotel.back.service.BillService;
 import com.hotel.back.service.ReservationService;
 import com.hotel.back.service.RoomService;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 @Service
 public class BillServiceImpl implements BillService {
@@ -41,4 +44,27 @@ public class BillServiceImpl implements BillService {
         RoomStatus roomStatus = RoomStatus.Occupied;
         roomService.setRoomStatus(roomId, roomStatus);
     }
+
+    @Override
+    public Bill getBillByReservationId(int reservationId) {
+        return billMapper.getBillByReservationId(reservationId);
+    }
+
+    @Override
+    public ArrayList<BillInfo> getBillInfo(String phone) {
+        return billMapper.getBillInfo(phone);
+    }
+
+    @Override
+    public void confirmPayment(String phone, int billId) {
+        PaymentStatus paymentStatus = PaymentStatus.Paid;
+        billMapper.confirmPayment(phone, billId, paymentStatus);
+    }
+
+    @Override
+    public Bill getBillById(int billId) {
+        return billMapper.getBillById(billId);
+    }
+
+
 }

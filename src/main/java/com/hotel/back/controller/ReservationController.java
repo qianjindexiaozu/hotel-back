@@ -1,5 +1,6 @@
 package com.hotel.back.controller;
 
+import com.hotel.back.constant.enums.ReservationStatus;
 import com.hotel.back.constant.enums.RoomType;
 import com.hotel.back.entity.Reservation;
 import com.hotel.back.entity.Result;
@@ -36,8 +37,18 @@ public class ReservationController {
         if(phone == null){
             return Result.error("token已过期，请重新登陆！");
         }
+        User u = userService.getUserByPhone(phone);
+        int userId = u.getUserId();
+        int before = reservationService.countReservationByDetail(userId, checkInDate, checkOutDate, roomType);
         reservationService.newReservation(phone, checkInDate, checkOutDate, roomType);
-        return Result.success();
+        int after = reservationService.countReservationByDetail(userId, checkInDate, checkOutDate, roomType);
+
+        if(after - before == 1){
+            return Result.success();
+        }
+        else{
+            return  Result.error("预订时出错");
+        }
     }
 
     @GetMapping("/list")
@@ -59,7 +70,13 @@ public class ReservationController {
             return Result.error("token已过期，请重新登陆！");
         }
         reservationService.cancelReservation(phone, reservationId);
-        return Result.success();
+        Reservation res = reservationService.getReservationById(reservationId);
+        if(res.getReservationStatus().equals(ReservationStatus.Canceled)){
+            return Result.success();
+        }
+        else{
+            return Result.error("取消订单失败");
+        }
     }
 
     @GetMapping("/getCheckInInfo")
