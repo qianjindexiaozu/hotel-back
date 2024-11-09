@@ -1,5 +1,6 @@
 package com.hotel.back.service;
 
+import com.hotel.back.constant.enums.ReservationStatus;
 import com.hotel.back.constant.enums.RoomType;
 import com.hotel.back.entity.Reservation;
 import com.hotel.back.repository.CheckInInfo;
@@ -13,4 +14,5 @@ public interface ReservationService {
     ArrayList<CheckInInfo> getCheckInInfo();
     Reservation getReservationById(int reservationId);
     int countReservationByDetail(int userId, String inDate, String outDate, RoomType roomType);
+    void setReservationStatus(int reservationId, ReservationStatus reservationStatus);
 }

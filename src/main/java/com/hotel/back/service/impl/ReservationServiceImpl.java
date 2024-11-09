@@ -86,4 +86,9 @@ public class ReservationServiceImpl implements ReservationService {
         Date checkOutDate = Date.valueOf(outDate);
         return reservationMapper.countReservationByDetail(userId, checkInDate, checkOutDate, roomType);
     }
+
+    @Override
+    public void setReservationStatus(int reservationId, ReservationStatus reservationStatus) {
+        reservationMapper.setReservationStatus(reservationId, reservationStatus);
+    }
 }

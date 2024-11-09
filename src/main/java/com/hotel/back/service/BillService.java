@@ -11,4 +11,6 @@ public interface BillService {
     ArrayList<BillInfo> getBillInfo(String phone);
     void confirmPayment(String phone, int billId);
     Bill getBillById(int billId);
+    ArrayList<BillInfo> getCheckOutInfo();
+    void leave(int billId);
 }

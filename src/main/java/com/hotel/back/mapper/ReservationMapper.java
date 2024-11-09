@@ -47,4 +47,8 @@ public interface ReservationMapper {
                                  @Param("checkInDate") Date checkInDate,
                                  @Param("checkOutDate") Date checkOutDate,
                                  @Param("roomType") RoomType roomType);
+
+    @Update("update reservations set reservation_status=#{reservationStatus} where reservation_id=#{reservationId}")
+    void setReservationStatus(@Param("reservationId") int reservationId,
+                              @Param("reservationStatus") ReservationStatus reservationStatus);
 }

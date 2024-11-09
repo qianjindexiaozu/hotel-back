@@ -2,6 +2,7 @@ package com.hotel.back.service.impl;
 
 import com.hotel.back.constant.enums.FeedbackStatus;
 import com.hotel.back.constant.enums.PaymentStatus;
+import com.hotel.back.constant.enums.ReservationStatus;
 import com.hotel.back.constant.enums.RoomStatus;
 import com.hotel.back.entity.Bill;
 import com.hotel.back.entity.Reservation;
@@ -64,6 +65,23 @@ public class BillServiceImpl implements BillService {
     @Override
     public Bill getBillById(int billId) {
         return billMapper.getBillById(billId);
+    }
+
+    @Override
+    public ArrayList<BillInfo> getCheckOutInfo() {
+        ReservationStatus reservationStatus = ReservationStatus.Confirmed;
+        return billMapper.getCheckOutInfo(reservationStatus);
+    }
+
+    @Override
+    public void leave(int billId) {
+        Bill b = getBillById(billId);
+        int reservationId = b.getReservationId();
+        int roomId = b.getRoomId();
+        ReservationStatus reservationStatus = ReservationStatus.Completed;
+        RoomStatus roomStatus = RoomStatus.Available;
+        reservationService.setReservationStatus(reservationId, reservationStatus);
+        roomService.setRoomStatus(roomId, roomStatus);
     }
 
 

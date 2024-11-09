@@ -1,11 +1,17 @@
 package com.hotel.back.controller;
 
 import com.hotel.back.constant.enums.PaymentStatus;
+import com.hotel.back.constant.enums.ReservationStatus;
+import com.hotel.back.constant.enums.RoomStatus;
 import com.hotel.back.entity.Bill;
+import com.hotel.back.entity.Reservation;
 import com.hotel.back.entity.Result;
+import com.hotel.back.entity.Room;
 import com.hotel.back.repository.BillInfo;
 import com.hotel.back.repository.CheckInInfo;
 import com.hotel.back.service.BillService;
+import com.hotel.back.service.ReservationService;
+import com.hotel.back.service.RoomService;
 import com.hotel.back.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +24,12 @@ import java.util.ArrayList;
 public class BillController {
     @Autowired
     private BillService billService;
+
+    @Autowired
+    private ReservationService reservationService;
+
+    @Autowired
+    private RoomService roomService;
 
     @PostMapping("/new")
     public Result<String> newBill(@RequestParam String token,
@@ -70,6 +82,40 @@ public class BillController {
             else{
                 return Result.error("支付时出错");
             }
+        }
+    }
+
+    @GetMapping("/checkOutInfo")
+    public Result<ArrayList<BillInfo>> getCheckOutInfo(@RequestParam String token){
+        String role = JwtUtil.getRoleFromToken(token);
+        if(role.equals("Staff")){
+            ArrayList<BillInfo> billInfos = billService.getCheckOutInfo();
+            return Result.success(billInfos);
+        }
+        else {
+            return Result.error("需要职员账号");
+        }
+    }
+
+    @PutMapping("/leave")
+    public Result<String> leave(@RequestParam String token,
+                                @RequestParam int billId){
+        String role = JwtUtil.getRoleFromToken(token);
+        if(role.equals("Staff")){
+            billService.leave(billId);
+            Bill b = billService.getBillById(billId);
+            Reservation res = reservationService.getReservationById(b.getReservationId());
+            Room room = roomService.getRoomById(b.getRoomId());
+            if(res.getReservationStatus().equals(ReservationStatus.Completed)
+                    && room.getStatus().equals(RoomStatus.Available)){
+                return Result.success();
+            }
+            else{
+                return Result.error("出现了一些问题");
+            }
+        }
+        else {
+            return Result.error("需要职员账号");
         }
     }
 

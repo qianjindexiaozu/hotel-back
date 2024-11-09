@@ -2,6 +2,7 @@ package com.hotel.back.repository;
 
 import com.hotel.back.constant.enums.FeedbackStatus;
 import com.hotel.back.constant.enums.PaymentStatus;
+import com.hotel.back.constant.enums.ReservationStatus;
 import com.hotel.back.constant.enums.RoomType;
 import lombok.Data;
 
@@ -24,4 +25,5 @@ public class BillInfo {
     private BigDecimal amount;
     private PaymentStatus paymentStatus;
     private FeedbackStatus feedbackStatus;
+    private ReservationStatus reservationStatus;
 }

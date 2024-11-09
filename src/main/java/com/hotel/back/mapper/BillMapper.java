@@ -2,6 +2,7 @@ package com.hotel.back.mapper;
 
 import com.hotel.back.constant.enums.FeedbackStatus;
 import com.hotel.back.constant.enums.PaymentStatus;
+import com.hotel.back.constant.enums.ReservationStatus;
 import com.hotel.back.entity.Bill;
 import com.hotel.back.repository.BillInfo;
 import org.apache.ibatis.annotations.*;
@@ -37,4 +38,7 @@ public interface BillMapper {
 
     @Select("select * from bills where bill_id=#{billId}")
     Bill getBillById(@Param("billId") int billId);
+
+    @Select("select * from bill_info where reservation_status=#{reservationStatus}")
+    ArrayList<BillInfo> getCheckOutInfo(@Param("reservationStatus")ReservationStatus reservationStatus);
 }
