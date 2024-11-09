@@ -163,4 +163,16 @@ public class RoomController {
             return Result.error("需要职员账号");
         }
     }
+
+    @GetMapping("/getSumRoomNumber")
+    public Result<Integer> getSumRoomNumber(@RequestParam String token){
+        String role = JwtUtil.getRoleFromToken(token);
+        if(role.equals("Admin")){
+            int sumRoomNumber = roomService.getSumRoomNumber();
+            return Result.success(sumRoomNumber);
+        }
+        else {
+            return Result.error("需要管理员账号");
+        }
+    }
 }

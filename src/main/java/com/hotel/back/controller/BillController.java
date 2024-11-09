@@ -150,11 +150,12 @@ public class BillController {
         }
     }
 
-    @GetMapping("/getPaidBillInfo")
-    public Result<ArrayList<BillInfo>> getPaidBillInfo(@RequestParam String token){
+    @GetMapping("/getThisMonthInfo")
+    public Result<ArrayList<BillInfo>> getThisMonthInfo(@RequestParam String token){
         String role = JwtUtil.getRoleFromToken(token);
         if(role.equals("Admin")){
-            ArrayList<BillInfo> billInfos = billService.getPaidBillInfo();
+            ArrayList<BillInfo> billInfos = billService.getThisMonthInfo();
+//            System.out.println(billInfos);
             return Result.success(billInfos);
         }
         else{

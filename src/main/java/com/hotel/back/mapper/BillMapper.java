@@ -65,6 +65,8 @@ public interface BillMapper {
     @Select("select * from feedback_info")
     ArrayList<FeedbackInfo> getFeedback();
 
-    @Select("select * from bill_info where payment_status=#{paymentStatus}")
-    ArrayList<BillInfo> getPaidBillInfo(@Param("paymentStatus") PaymentStatus paymentStatus);
+    @Select("select * from bill_info where payment_status=#{paymentStatus} and issued_date>=#{firstDay} and issued_date<=#{lastDay}")
+    ArrayList<BillInfo> getThisMonthInfo(@Param("paymentStatus") PaymentStatus paymentStatus,
+                                         @Param("firstDay") Date firstDay,
+                                         @Param("lastDay") Date lastDay);
 }

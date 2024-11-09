@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 
 @Service
@@ -109,9 +110,14 @@ public class BillServiceImpl implements BillService {
     }
 
     @Override
-    public ArrayList<BillInfo> getPaidBillInfo() {
+    public ArrayList<BillInfo> getThisMonthInfo() {
         PaymentStatus paymentStatus = PaymentStatus.Paid;
-        return billMapper.getPaidBillInfo(paymentStatus);
+        LocalDate today = LocalDate.now();
+        LocalDate firstDayOfMonth = today.with(TemporalAdjusters.firstDayOfMonth());
+        LocalDate lastDayOfMonth = today.with(TemporalAdjusters.lastDayOfMonth());
+        Date firstDay = Date.valueOf(firstDayOfMonth);
+        Date lastDay = Date.valueOf(lastDayOfMonth);
+        return billMapper.getThisMonthInfo(paymentStatus, firstDay, lastDay);
     }
 
 

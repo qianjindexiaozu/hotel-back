@@ -88,4 +88,10 @@ public class RoomServiceImpl implements RoomService {
     public Room getRoomById(int roomId) {
         return roomMapper.getRoomById(roomId);
     }
+
+    @Override
+    public Integer getSumRoomNumber(){
+        RoomStatus roomStatus = RoomStatus.Maintenance;
+        return roomMapper.getSumRoomNumber(roomStatus);
+    }
 }

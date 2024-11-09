@@ -23,4 +23,5 @@ public interface RoomService {
     ArrayList<Room> getAvailableRoom(RoomType roomType);
     void setRoomStatus(int roomId, RoomStatus roomStatus);
     Room getRoomById(int roomId);
+    Integer getSumRoomNumber();
 }

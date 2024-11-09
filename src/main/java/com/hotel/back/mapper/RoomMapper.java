@@ -70,4 +70,7 @@ public interface RoomMapper {
 
     @Select("select * from rooms where room_id=#{roomId}")
     Room getRoomById(@Param("roomId") int roomId);
+
+    @Select("select count(*) from rooms where status!=#{status}")
+    Integer getSumRoomNumber(@Param("status") RoomStatus roomStatus);
 }
