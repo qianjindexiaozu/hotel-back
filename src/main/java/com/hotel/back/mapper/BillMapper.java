@@ -69,4 +69,8 @@ public interface BillMapper {
     ArrayList<BillInfo> getThisMonthInfo(@Param("paymentStatus") PaymentStatus paymentStatus,
                                          @Param("firstDay") Date firstDay,
                                          @Param("lastDay") Date lastDay);
+
+    @Select("select * from feedback_info where phone=#{phone} and bill_id=#{billId}")
+    FeedbackInfo getFeedbackByBill(@Param("phone") String phone,
+                                   @Param("billId") int billId);
 }

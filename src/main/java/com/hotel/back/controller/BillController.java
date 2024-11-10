@@ -162,4 +162,22 @@ public class BillController {
             return Result.error("需要管理员账号");
         }
     }
+
+    @GetMapping("/getFeedbackByBill")
+    public Result<FeedbackInfo> getFeedbackByBill(@RequestParam String token,
+                                                  @RequestParam int billId){
+        String phone = JwtUtil.getPhoneFromToken(token);
+        if(phone == null){
+            return Result.error("token已过期，请重新登陆");
+        }
+        else{
+            FeedbackInfo feedbackInfo = billService.getFeedbackByBill(phone, billId);
+            if(feedbackInfo == null){
+                return Result.error("查询失败");
+            }
+            else{
+                return Result.success(feedbackInfo);
+            }
+        }
+    }
 }

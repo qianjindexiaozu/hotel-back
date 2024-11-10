@@ -120,5 +120,10 @@ public class BillServiceImpl implements BillService {
         return billMapper.getThisMonthInfo(paymentStatus, firstDay, lastDay);
     }
 
+    @Override
+    public FeedbackInfo getFeedbackByBill(String phone, int billId) {
+        return billMapper.getFeedbackByBill(phone, billId);
+    }
+
 
 }

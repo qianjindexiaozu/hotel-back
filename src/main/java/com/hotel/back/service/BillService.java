@@ -17,4 +17,5 @@ public interface BillService {
     void setFeedback(String phone, int billId, float rating, String comments);
     ArrayList<FeedbackInfo> getFeedback();
     ArrayList<BillInfo> getThisMonthInfo();
+    FeedbackInfo getFeedbackByBill(String phone, int billId);
 }
